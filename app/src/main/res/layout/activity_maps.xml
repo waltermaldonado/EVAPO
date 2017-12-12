@@ -12,7 +12,7 @@
     sothree:umanoPanelHeight="0dp"
     sothree:umanoShadowHeight="4dp">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,32 +24,19 @@
             android:id="@+id/place_autocomplete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment" />
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            />
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:map="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/place_autocomplete"
             tools:context="br.com.maldonado.instantet0.MapsActivity" />
 
-        <Button
-            android:id="@+id/btnTerrain"
-            android:layout_width="wrap_content"
-            android:layout_height="38dp"
-            android:layout_gravity="start|top"
-            android:text="@string/btn_terrain_satellite"
-            android:alpha="0.7"
-            android:layout_marginTop="12dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginLeft="15dp"
-            android:background="@drawable/mapbutton"
-            android:textColor="@color/black"
-            android:layout_below="@id/place_autocomplete" />
-
-    </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -57,6 +44,19 @@
         android:layout_weight="0.4"
         android:gravity="center|top"
         android:orientation="vertical">
+
+        <!--<ProgressBar android:id="@+id/loading_spinner"-->
+            <!--style="?android:progressBarStyleLarge"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center" />-->
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="center"-->
+            <!--android:text="Aguarde..."-->
+            <!--android:textSize="16sp" />-->
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
