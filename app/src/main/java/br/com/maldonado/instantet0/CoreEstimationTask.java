@@ -1,12 +1,31 @@
 package br.com.maldonado.instantet0;
 
+import android.app.Application;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.text.format.DateFormat;
+import android.util.Log;
+import android.view.View;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created by walter on 04/07/17.
  */
 
-public class CoreEstimation {
+public class CoreEstimationTask {
 
-    public Double PenmannMonteith(Double srad, Double tmin, Double tmax, Double wind, Double t2m,
+    public Double estimatePenmannMonteith(Double srad, Double tmin, Double tmax, Double wind, Double t2m,
                                   Double rh2m) {
 
         final Double gama = 0.063;
@@ -30,5 +49,6 @@ public class CoreEstimation {
         return etp;
 
     }
+
 
 }
