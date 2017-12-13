@@ -23,7 +23,7 @@ import java.util.Date;
  * Created by walter on 04/07/17.
  */
 
-public class CoreEstimationTask {
+public class CoreEstimation {
 
     public Double estimatePenmannMonteith(Double srad, Double tmin, Double tmax, Double wind, Double t2m,
                                   Double rh2m) {

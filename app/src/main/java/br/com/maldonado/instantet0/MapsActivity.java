@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -19,10 +20,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -33,8 +38,10 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
@@ -54,7 +61,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleApiClient.ConnectionCallbacks,
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap;
@@ -64,7 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private int mapsHeight;
 
-    PlaceAutocompleteFragment placeAutoComplete;
+//    PlaceAutocompleteFragment placeAutoComplete;
 
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
@@ -72,7 +79,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // ETP internet request relate stuff
     private View tab1View;
     private View tab1LoadingView;
-    private int mAnimationDuration;
+
+    FusedLocationProviderClient mFusedLocationClient;
+//    Location mLastLocation;
+
+
+
+
+
+
+
 
 
     @Override
@@ -80,24 +96,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
         // implementation of the slidingview
         mLayout = findViewById(R.id.sliding_layout);
 
-        // Implements the searchbar functions
-        placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
-        placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
+//        // Implements the searchbar functions
+//        placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
+//        placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+//            @Override
+//            public void onPlaceSelected(Place place) {
+//
+//                Log.d("Maps", "Place selected: " + place.getName());
+//                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),15));
+//            }
+//
+//            @Override
+//            public void onError(Status status) {
+//                Log.d("Maps", "An error occurred: " + status);
+//            }
+//        });
 
-                Log.d("Maps", "Place selected: " + place.getName());
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),15));
-            }
-
-            @Override
-            public void onError(Status status) {
-                Log.d("Maps", "An error occurred: " + status);
-            }
-        });
 
         // Implements the sliding panel listener
         mLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
@@ -113,10 +132,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 tab1LoadingView = findViewById(R.id.tab1_spinner);
 
                 if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
-                    Log.d("PANEL STATE", "Collapsed");
+//                    Log.d("PANEL STATE", "Collapsed");
                     mMap.setPadding(0, 0, 0, 0);
                 } else if (newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
-                    Log.d("PANEL STATE", "Expanded");
+//                    Log.d("PANEL STATE", "Expanded");
                     mMap.setPadding(0, 0, 0, mapsHeight/2);
                 }
 
@@ -178,8 +197,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onPause();
 
         //stop location updates when Activity is no longer active
-        if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        if (mFusedLocationClient != null) {
+            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
         }
     }
 
@@ -202,9 +221,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
 
         if (tab1View != null) {
+            tab1View.setAlpha(0f);
             tab1View.setVisibility(View.GONE);
         }
         if (tab1LoadingView != null) {
+            tab1LoadingView.setAlpha(1f);
             tab1LoadingView.setVisibility(View.VISIBLE);
         }
 
@@ -217,9 +238,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         CameraUpdate updtLocation = CameraUpdateFactory.newLatLngZoom(pos, 11.0f);
         mMap.animateCamera(updtLocation);
 
-
-
-        Log.d("DEBUG","Map clicked [" + location.latitude + " / " + location.longitude + "]");
+//        Log.d("DEBUG","Map clicked [" + location.latitude + " / " + location.longitude + "]");
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
@@ -286,7 +305,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     t2m.get(i) != -99 &&
                                     rh2m.get(i) != -99) {
 
-                                CoreEstimationTask ce = new CoreEstimationTask();
+                                CoreEstimation ce = new CoreEstimation();
                                 Double etp = ce.estimatePenmannMonteith(srad.get(i),
                                         tmin.get(i),
                                         tmax.get(i),
@@ -300,25 +319,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 TextView tvEtp = findViewById(R.id.tvEtp);
                                 tvEtp.setText(String.format("%.02f", etp) + " mm/d");
 
+                                tab1View.setAlpha(0f);
                                 tab1View.setVisibility(View.VISIBLE);
-                                tab1LoadingView .setVisibility(View.GONE);
 
-//                                        // Animate the "show" view to 100% opacity, and clear any animation listener set on the view.
-//                                        tab1View.animate()
-//                                                .alpha(1f)
-//                                                .setDuration(1000)
-//                                                .setListener(null);
-//
-//                                        // Animate the "hide" view to 0% opacity.
-//                                        tab1LoadingView.animate()
-//                                                .alpha(0f)
-//                                                .setDuration(1000)
-//                                                .setListener(new AnimatorListenerAdapter() {
-//                                                    @Override
-//                                                    public void onAnimationEnd(Animator animation) {
-//                                                        tab1LoadingView.setVisibility(View.GONE);
-//                                                    }
-//                                                });
+                                tab1View.animate()
+                                        .alpha(1f)
+                                        .setDuration(500)
+                                        .setListener(null);
+
+                                tab1LoadingView.animate()
+                                               .alpha(0f)
+                                               .setDuration(500)
+                                               .setListener(new AnimatorListenerAdapter() {
+                                                   @Override
+                                                   public void onAnimationEnd(Animator animation) {
+                                                       tab1LoadingView.setVisibility(View.GONE);
+                                                   }
+                                               });
 
                                 break;
                             }
@@ -351,6 +368,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
+//        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -381,18 +399,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        //move map camera
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        calculateETP(latLng);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,11));
+    LocationCallback mLocationCallback = new LocationCallback(){
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            for (Location location : locationResult.getLocations()) {
+                Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
+//                mLastLocation = location;
 
-        // Stop updating the current location
-        if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        }
-    }
+                //Place current location marker
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                calculateETP(latLng);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,11));
+
+                if (mFusedLocationClient != null) {
+                    mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+                }
+            }
+        };
+
+    };
+
+//    @Override
+//    public void onLocationChanged(Location location) {
+//        //move map camera
+//        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+//        calculateETP(latLng);
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,11));
+//
+//        // Stop updating the current location
+//        if (mGoogleApiClient != null) {
+//            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+//        }
+//    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -403,7 +441,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
 //            // Stop updating the current location
 //            if (mGoogleApiClient != null) {
 //                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
@@ -456,6 +494,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION );
             }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // location-related task you need to do.
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+
+                        if (mGoogleApiClient == null) {
+                            buildGoogleApiClient();
+                        }
+                        mMap.setMyLocationEnabled(true);
+                    }
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
         }
     }
 
