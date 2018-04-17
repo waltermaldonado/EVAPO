@@ -25,17 +25,31 @@ import java.util.Date;
 
 public class CoreEstimation {
 
-    public Double estimatePenmannMonteith(Double srad, Double tmin, Double tmax, Double wind, Double t2m,
-                                  Double rh2m) {
+    public Double estimatePenmannMonteith(Double qg, Double q0, Double tmin, Double tmax, Double ws, Double t2m,
+                                  Double rh2m, Double elevation) {
 
-        final Double gama = 0.063;
+
+        // TODO: SRAD should be corrected according to the Rn correction (Rsi = Qg = srad)
+
+
+        final Double gamma   = 0.063;
+        final Double qg_conv = qg * (Math.pow(10, 6) / 86400);
+        final Double q0_conv = q0 * (Math.pow(10, 6) / 86400);
+        final Double q0_corr = (0.75 + 0.00002 * elevation) * q0_conv;
+        final Double alpha   = 0.2;
+        final Double sigma   = 5.67 * Math.pow(10, -8);
+        final Double ac      = 1.35;
+        final Double bc      = -0.35;
+        final Double a1      = 0.35;
+        final Double b1      = -0.14;
+
 
         Double esTmax = 0.6108 * Math.pow(10,(7.5 * tmax) / (237.3 + tmax));
         Double esTmin = 0.6108 * Math.pow(10,(7.5 * tmin) / (237.3 + tmin));
 
         Double es = (esTmax + esTmin) / 2;
 
-        Double t = (tmax + tmin) / 2;
+        Double t = t2m;
 
         Double s = (4098 * es) / Math.pow(t + 237.3, 2);
 
@@ -43,8 +57,14 @@ public class CoreEstimation {
 
         Double De = es - ea;
 
-        Double etp = (0.408 * s * (srad - 0.8) + (gama * wind * De) / (t + 275)) /
-                (s + gama * (1 + 0.34 * wind));
+
+        // Rn calculations
+        Double rn = (1 - alpha) * qg_conv - ( ac * ( qg_conv / q0_corr ) + bc ) * ( a1 + b1 * Math.sqrt(es) ) * sigma * ( ( Math.pow(tmax, 4) + Math.pow(tmin, 4) ) / 2 );
+        Double rn_conv = rn * ( 86400 / Math.pow(10, 6) );
+
+        // TODO: Replace srad with Rn
+        Double etp = (0.408 * s * (rn_conv - 0.8) + (gamma * 900 * ws * De) / (t + 273)) /
+                (s + gamma * (1 + 0.34 * ws));
 
         return etp;
 

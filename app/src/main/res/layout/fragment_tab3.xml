@@ -1,0 +1,91 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="br.com.maldonado.instantet0.Tab3Fragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:paddingLeft="10dp"
+        android:src="@drawable/gas" />
+
+    <TextView
+        android:layout_toRightOf="@id/logo"
+        android:id="@+id/tvGAS"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="@string/about_gas"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"/>
+
+    <TextView
+        android:id="@+id/fcav"
+        android:layout_below="@id/logo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:text="@string/about_fcav" />
+
+    <TextView
+        android:id="@+id/unesp"
+        android:layout_below="@id/fcav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:text="@string/about_unesp" />
+
+    <TextView
+        android:id="@+id/walter"
+        android:layout_below="@id/unesp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:textSize="12sp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:text="@string/walter" />
+
+    <TextView
+        android:id="@+id/taynara"
+        android:layout_below="@id/walter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:textSize="12sp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:text="@string/taynara" />
+
+    <TextView
+        android:id="@+id/glauco"
+        android:layout_below="@id/taynara"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:textSize="12sp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:text="@string/glauco" />
+
+    <TextView
+        android:id="@+id/link"
+        android:layout_below="@id/glauco"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:autoLink="web"
+        android:paddingTop="3dp"
+        android:text="@string/link" />
+
+</RelativeLayout>

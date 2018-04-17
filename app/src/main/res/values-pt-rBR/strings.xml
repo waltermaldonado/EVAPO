@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_location_detected">Localização não detectada. Certifique-se de que a localização está habilitada no dispositivo</string>
+    <string name="permission_rationale">É necessário permitir acesso à localização do dispositivo para o funcionamento correto do aplicativo</string>
+    <string name="permission_denied_explanation">Permissão negada, porém necessária para o funcionamento correto do aplicativo</string>
+    <string name="settings">Configurações</string>
+    <string name="hello_blank_fragment">Olá mundo fragmento em branco</string>
+    <string name="date_etp">Calculada com dados de %s</string>
+    <string name="alert_title">Erro</string>
+    <string name="error_nasa_request">Houve um problema ao recuperar dados dos serviços da NASA</string>
+    <string name="alert_ok">OK</string>
+    <string name="unavailable_etp">Serviço indisponível</string>
+    <string name="try_again_etp">Os serviços da NASA estão fora do ar, tente novamente mais tarde</string>
+    <string name="tab1_title">ETP</string>
+    <string name="tab2_title">HISTÓRICO</string>
+    <string name="tab3_title">SOBRE</string>
+    <string name="chart_nodata">Sem dados disponíveis</string>
+    <string name="location_permission_needed">Permissões de localização necessárias</string>
+    <string name="location_permission_message">Este aplicativo precisa de permissões de localização do dispositivo, por favor aceite para utilizar as funcionalidades de localização</string>
+    <string name="location_message_ok">OK</string>
+    <string name="location_permission_denied">Permissão negada</string>
+    <string name="calculated_etp">ETP Calculada</string>
+    <string name="about_gas">Grupo de Estudos Agrometeorológicos</string>
+    <string name="about_fcav">Facudade de Ciências Agrárias e Veterinárias - FCAV</string>
+    <string name="about_unesp">Universidade Estadual Paulista - UNESP</string>
+    <string name="error_internet_conn">Houve um erro ao tentar se conectar ao serviço remoto</string>
+    <string name="try_again_internet_conn">Cheque sua conexão com a internet e tente novamente</string>
+</resources>
