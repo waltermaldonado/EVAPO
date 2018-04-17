@@ -6,6 +6,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Paint;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
@@ -26,15 +28,28 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.Chart;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -56,10 +71,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
@@ -71,7 +95,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private int mapsHeight;
 
-//    PlaceAutocompleteFragment placeAutoComplete;
+    PlaceAutocompleteFragment placeAutoComplete;
 
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
@@ -81,15 +105,55 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private View tab1LoadingView;
 
     FusedLocationProviderClient mFusedLocationClient;
-//    Location mLastLocation;
 
 
+    public void showTabEtpContent(String etpValue, String dateValue) {
 
+        TextView tvEtp = findViewById(R.id.tvEtp);
+        tvEtp.setText(etpValue);
 
+        TextView tvDateEtp = findViewById(R.id.tvDateEtp);
+        tvDateEtp.setText(dateValue);
 
+        TextView tvLblEtp = findViewById(R.id.tvLblEtp);
+        tvLblEtp.setVisibility(View.VISIBLE);
 
+        tab1View.setAlpha(0f);
+        tab1View.setVisibility(View.VISIBLE);
 
+        tab1View.animate()
+                .alpha(1f)
+                .setDuration(500)
+                .setListener(null);
 
+        tab1LoadingView.animate()
+                .alpha(0f)
+                .setDuration(500)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        tab1LoadingView.setVisibility(View.GONE);
+                    }
+                });
+
+    }
+
+    public void showAlertDialog(String title, String message, String etpValue, String dateValue) {
+
+        AlertDialog alertDialog = new AlertDialog.Builder(MapsActivity.this).create();
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.alert_ok),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+
+        showTabEtpContent(etpValue, dateValue);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,21 +165,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // implementation of the slidingview
         mLayout = findViewById(R.id.sliding_layout);
 
-//        // Implements the searchbar functions
-//        placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
-//        placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(Place place) {
-//
+        // Implements the searchbar functions
+        placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
+        placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+
 //                Log.d("Maps", "Place selected: " + place.getName());
-//                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),15));
-//            }
-//
-//            @Override
-//            public void onError(Status status) {
-//                Log.d("Maps", "An error occurred: " + status);
-//            }
-//        });
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),15));
+            }
+
+            @Override
+            public void onError(Status status) {
+                Log.d("Maps", "An error occurred: " + status);
+            }
+        });
 
 
         // Implements the sliding panel listener
@@ -149,6 +213,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Tabs on slide panel initialization
         viewPager = findViewById(R.id.viewpager);
+        viewPager.setOffscreenPageLimit(2);
         setupViewPager(viewPager);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -158,8 +223,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new Tab1Fragment(), "ETP");
-        adapter.addFragment(new Tab2Fragment(), "HISTORY");
+        adapter.addFragment(new Tab1Fragment(), getString(R.string.tab1_title));
+        adapter.addFragment(new Tab2Fragment(), getString(R.string.tab2_title));
+        adapter.addFragment(new Tab3Fragment(), getString(R.string.tab3_title));
         viewPager.setAdapter(adapter);
     }
 
@@ -238,15 +304,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         CameraUpdate updtLocation = CameraUpdateFactory.newLatLngZoom(pos, 11.0f);
         mMap.animateCamera(updtLocation);
 
-//        Log.d("DEBUG","Map clicked [" + location.latitude + " / " + location.longitude + "]");
-
-        // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
 
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
-        c.add(Calendar.DATE, -20);
+        c.add(Calendar.DATE, -50);
         Date date = new Date();
         date.setTime(c.getTime().getTime());
         Date cDate = new Date();
@@ -259,100 +322,168 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String eMonth = (String) DateFormat.format("MM",   cDate);
         String eYear = (String) DateFormat.format("yyyy", cDate);
 
-        String url ="https://power.larc.nasa.gov/cgi-bin/agro.cgi?email=&step=1&lat=" + latitude +
-                "&lon=" + longitude +
-                "&ms=" + sMonth +
-                "&ds=" + sDay +
-                "&ys=" + sYear +
-                "&me=" + eMonth +
-                "&de=" + eDay +
-                "&ye=" + eYear +
-                "&submit=Yes";
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
+        String url = "https://asdc-arcgis.larc.nasa.gov/cgi-bin/power/v1beta/DataAccess.py?" +
+                "request=execute&" +
+                "identifier=SinglePoint&" +
+                "parameters=ALLSKY_SFC_SW_DWN,ALLSKY_TOA_SW_DWN,RH2M,T2M,T2M_MAX,T2M_MIN,WS10M&" +
+                "startDate=" + sYear + sMonth + sDay + "&" +
+                "endDate=" + eYear + eMonth + eDay + "&" +
+                "userCommunity=AG&" +
+                "tempAverage=DAILY&" +
+                "outputList=JSON&" +
+                "lat=" + latitude + "&" +
+                "lon=" + longitude + "&" +
+                "user=anonymous";
+
+        // Chart creation
+        final LineChart chart = (LineChart) findViewById(R.id.chart);
+
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setValueFormatter(new ChartDateXAxisFormatter());
+        xAxis.setCenterAxisLabels(true);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        Legend legend = chart.getLegend();
+        legend.setEnabled(false);
+
+        chart.getDescription().setEnabled(false);
+
+        chart.setNoDataText(getString(R.string.chart_nodata));
+        chart.fitScreen();
+        chart.clear();
+        chart.invalidate();
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(String response) {
+                    public void onResponse(JSONObject response) {
+                        try{
 
-                        String lines[] = response.split("\\r?\\n");
-                        int sLength = lines.length;
+                            JSONObject primary_data = response
+                                    .getJSONArray("features")
+                                    .getJSONObject(0);
 
-                        ArrayList<Integer> weday = new ArrayList<Integer>();
-                        ArrayList<Double> srad = new ArrayList<Double>();
-                        ArrayList<Double> tmax = new ArrayList<Double>();
-                        ArrayList<Double> tmin = new ArrayList<Double>();
-                        ArrayList<Double> wind = new ArrayList<Double>();
-                        ArrayList<Double> t2m = new ArrayList<Double>();
-                        ArrayList<Double> rh2m = new ArrayList<Double>();
+                            JSONObject data = primary_data
+                                    .getJSONObject("properties")
+                                    .getJSONObject("parameter");
 
-                        for (int i = sLength - 20; i < sLength; i++) {
-                            String fields[] = lines[i].split(" +");
-                            weday.add(Integer.valueOf(fields[2]));
-                            srad.add(Double.valueOf(fields[3]));
-                            tmax.add(Double.valueOf(fields[4]));
-                            tmin.add(Double.valueOf(fields[5]));
-                            wind.add(Double.valueOf(fields[7]));
-                            t2m.add(Double.valueOf(fields[9]));
-                            rh2m.add(Double.valueOf(fields[10]));
-                        }
+                            JSONArray location = primary_data
+                                    .getJSONObject("geometry")
+                                    .getJSONArray("coordinates");
 
-                        for (int i = weday.size() - 1; i >= 0; i--) {
-                            if (weday.get(i) != -99 &&
-                                    srad.get(i) != -99 &&
-                                    tmax.get(i) != -99 &&
-                                    tmin.get(i) != -99 &&
-                                    wind.get(i) != -99 &&
-                                    t2m.get(i) != -99 &&
-                                    rh2m.get(i) != -99) {
+                            JSONObject qg = data.getJSONObject("ALLSKY_SFC_SW_DWN");
+                            JSONObject q0 = data.getJSONObject("ALLSKY_TOA_SW_DWN");
+                            JSONObject rh = data.getJSONObject("RH2M");
+                            JSONObject t2m = data.getJSONObject("T2M");
+                            JSONObject tmax = data.getJSONObject("T2M_MAX");
+                            JSONObject tmin = data.getJSONObject("T2M_MIN");
+                            JSONObject ws = data.getJSONObject("WS10M");
 
-                                CoreEstimation ce = new CoreEstimation();
-                                Double etp = ce.estimatePenmannMonteith(srad.get(i),
-                                        tmin.get(i),
-                                        tmax.get(i),
-                                        wind.get(i),
-                                        t2m.get(i),
-                                        rh2m.get(i));
-
-                                Log.d("DEBUG", response);
-                                Log.d("DEBUG", "ETP: " + String.format("%.02f", etp) + " mm/d");
-
-                                TextView tvEtp = findViewById(R.id.tvEtp);
-                                tvEtp.setText(String.format("%.02f", etp) + " mm/d");
-
-                                tab1View.setAlpha(0f);
-                                tab1View.setVisibility(View.VISIBLE);
-
-                                tab1View.animate()
-                                        .alpha(1f)
-                                        .setDuration(500)
-                                        .setListener(null);
-
-                                tab1LoadingView.animate()
-                                               .alpha(0f)
-                                               .setDuration(500)
-                                               .setListener(new AnimatorListenerAdapter() {
-                                                   @Override
-                                                   public void onAnimationEnd(Animator animation) {
-                                                       tab1LoadingView.setVisibility(View.GONE);
-                                                   }
-                                               });
-
-                                break;
+                            Iterator keysToCopyIterator = qg.keys();
+                            List<String> keysList = new ArrayList<String>();
+                            while(keysToCopyIterator.hasNext()) {
+                                String key = (String) keysToCopyIterator.next();
+                                keysList.add(key);
                             }
 
+
+                            List<Entry> entries = new ArrayList<Entry>();
+
+                            for (int i = 0; i < keysList.size(); i++) {
+
+                                if (
+                                        Double.parseDouble(qg.get(keysList.get(i)).toString()) != -99 &&
+                                        Double.parseDouble(q0.get(keysList.get(i)).toString()) != -99 &&
+                                        Double.parseDouble(rh.get(keysList.get(i)).toString()) != -999 &&
+                                        Double.parseDouble(t2m.get(keysList.get(i)).toString()) != -99 &&
+                                        Double.parseDouble(tmax.get(keysList.get(i)).toString()) != -99 &&
+                                        Double.parseDouble(tmin.get(keysList.get(i)).toString()) != -99 &&
+                                        Double.parseDouble(ws.get(keysList.get(i)).toString()) != -999) {
+
+                                    CoreEstimation ce = new CoreEstimation();
+                                    Double etp = ce.estimatePenmannMonteith(
+                                            Double.parseDouble(qg.get(keysList.get(i)).toString()),
+                                            Double.parseDouble(q0.get(keysList.get(i)).toString()),
+                                            Double.parseDouble(tmin.get(keysList.get(i)).toString()),
+                                            Double.parseDouble(tmax.get(keysList.get(i)).toString()),
+                                            Double.parseDouble(ws.get(keysList.get(i)).toString()),
+                                            Double.parseDouble(t2m.get(keysList.get(i)).toString()),
+                                            Double.parseDouble(rh.get(keysList.get(i)).toString()),
+                                            Double.parseDouble(location.getString(2)));
+
+                                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+                                    Date date = null;
+                                    try {
+                                        date = format.parse(keysList.get(i));
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+
+
+                                    entries.add(new Entry((float) date.getTime(), etp.floatValue()));
+
+                                    java.text.DateFormat dateFormat = DateFormat.getDateFormat(getApplicationContext());
+                                    showTabEtpContent(String.format("%.02f", etp) + " mm/d",
+                                            getString(R.string.date_etp, dateFormat.format(date)));
+
+
+                                }
+
+                            }
+
+                            LineDataSet dataSet = new LineDataSet(entries, "ETP");
+                            dataSet.setColor(R.color.chartBlue);
+                            dataSet.setFillColor(R.color.chartBlue);
+                            dataSet.setCircleColor(R.color.chartBlue);
+                            dataSet.setCircleColorHole(R.color.chartBlue);
+                            LineData lineData = new LineData(dataSet);
+                            chart.setData(lineData);
+                            chart.animateY(2000, Easing.EasingOption.EaseOutCubic);
+                            chart.animateX(2000, Easing.EasingOption.EaseOutCubic);
+
+
+                        } catch (JSONException e){
+
+                            showAlertDialog(getString(R.string.alert_title),
+                                    getString(R.string.error_nasa_request),
+                                    getString(R.string.unavailable_etp),
+                                    getString(R.string.try_again_etp));
+
+                            TextView tvLblEtp = findViewById(R.id.tvLblEtp);
+                            tvLblEtp.setVisibility(View.INVISIBLE);
+
+                            e.printStackTrace();
+
                         }
-
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("DEBUG","Volley error!!");
-            }
-        });
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+                },
+                new Response.ErrorListener(){
+                    @Override
+                    public void onErrorResponse(VolleyError error){
+                        // Do something when error occurred
 
-        Log.d("DEBUG",url);
+                        showAlertDialog(getString(R.string.alert_title),
+                                getString(R.string.error_internet_conn),
+                                getString(R.string.unavailable_etp),
+                                getString(R.string.try_again_internet_conn));
+
+                        TextView tvLblEtp = findViewById(R.id.tvLblEtp);
+                        tvLblEtp.setVisibility(View.INVISIBLE);
+
+                        error.printStackTrace();
+                    }
+                }
+        );
+
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(20000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        queue.add(jsonObjectRequest);
     }
 
 
@@ -419,19 +550,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     };
 
-//    @Override
-//    public void onLocationChanged(Location location) {
-//        //move map camera
-//        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-//        calculateETP(latLng);
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,11));
-//
-//        // Stop updating the current location
-//        if (mGoogleApiClient != null) {
-//            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-//        }
-//    }
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         mLocationRequest = new LocationRequest();
@@ -473,9 +591,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
                 new AlertDialog.Builder(this)
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        .setTitle(getString(R.string.location_permission_needed))
+                        .setMessage(getString(R.string.location_permission_message))
+                        .setPositiveButton(getString(R.string.location_message_ok), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //Prompt the user once explanation has been shown
@@ -522,7 +640,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.location_permission_denied, Toast.LENGTH_LONG).show();
                 }
                 return;
             }

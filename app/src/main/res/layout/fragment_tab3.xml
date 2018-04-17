@@ -1,139 +1,91 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="br.com.maldonado.instantet0.Tab3Fragment">
 
     <!-- TODO: Update blank fragment layout -->
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="115dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@+id/link"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:paddingLeft="10dp"
+        android:src="@drawable/gas" />
 
-        <ImageView
-            android:id="@+id/logo_gas"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0.75"
-            android:src="@drawable/logo_gas" />
-
-        <ImageView
-            android:id="@+id/logo_unesp"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingRight="3dp"
-            android:paddingTop="3dp"
-            android:src="@drawable/logo_unesp"
-            app:layout_constraintStart_toEndOf="@+id/logo_gas"
-            tools:layout_editor_absoluteY="0dp" />
-
-    </LinearLayout>
-
-
-
-    <!--<TextView-->
-    <!--android:layout_toRightOf="@id/logo"-->
-    <!--android:id="@+id/tvGAS"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="50dp"-->
-    <!--android:text="@string/about_gas"-->
-    <!--android:gravity="center"-->
-    <!--android:textSize="16sp"-->
-    <!--android:paddingBottom="5dp"-->
-    <!--android:paddingTop="5dp"/>-->
+    <TextView
+        android:layout_toRightOf="@id/logo"
+        android:id="@+id/tvGAS"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="@string/about_gas"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"/>
 
     <TextView
         android:id="@+id/fcav"
-        android:layout_width="wrap_content"
+        android:layout_below="@id/logo"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
         android:paddingLeft="3dp"
         android:paddingRight="3dp"
-        android:text="@string/about_fcav"
-        android:maxLines="1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        android:text="@string/about_fcav" />
 
     <TextView
         android:id="@+id/unesp"
-        android:layout_width="wrap_content"
+        android:layout_below="@id/fcav"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
         android:paddingLeft="3dp"
         android:paddingRight="3dp"
-        android:text="@string/about_unesp"
-        android:maxLines="1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fcav" />
+        android:text="@string/about_unesp" />
 
     <TextView
         android:id="@+id/walter"
-        android:layout_width="wrap_content"
+        android:layout_below="@id/unesp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:gravity="end"
+        android:textSize="12sp"
         android:paddingLeft="3dp"
         android:paddingRight="3dp"
-        android:text="@string/walter"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/unesp" />
+        android:text="@string/walter" />
 
     <TextView
         android:id="@+id/taynara"
-        android:layout_width="wrap_content"
+        android:layout_below="@id/walter"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:gravity="end"
+        android:textSize="12sp"
         android:paddingLeft="3dp"
         android:paddingRight="3dp"
-        android:text="@string/taynara"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/walter" />
+        android:text="@string/taynara" />
 
     <TextView
         android:id="@+id/glauco"
-        android:layout_width="wrap_content"
+        android:layout_below="@id/taynara"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:gravity="end"
+        android:textSize="12sp"
         android:paddingLeft="3dp"
         android:paddingRight="3dp"
-        android:text="@string/glauco"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/link"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/taynara" />
+        android:text="@string/glauco" />
 
     <TextView
         android:id="@+id/link"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:autoLink="web"
+        android:layout_below="@id/glauco"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
+        android:textSize="12sp"
         android:paddingLeft="3dp"
         android:paddingRight="3dp"
-        android:text="@string/link"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/glauco"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/glauco" />
+        android:autoLink="web"
+        android:paddingTop="3dp"
+        android:text="@string/link" />
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
