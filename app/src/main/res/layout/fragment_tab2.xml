@@ -4,10 +4,10 @@
     android:layout_height="match_parent"
     tools:context="br.com.maldonado.instantet0.Tab2Fragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="History information" />
+        android:paddingBottom="3dp"/>
 
 </FrameLayout>
