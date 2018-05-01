@@ -1,8 +1,9 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="br.com.maldonado.instantet0.Tab2Fragment">
+    tools:context="br.com.maldonado.instantet0.Tab2Fragment"
+    android:orientation="vertical">
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
@@ -10,4 +11,4 @@
         android:layout_height="match_parent"
         android:paddingBottom="3dp"/>
 
-</FrameLayout>
+</LinearLayout>

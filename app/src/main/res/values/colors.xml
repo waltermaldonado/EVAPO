@@ -2,7 +2,5 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="colorYellow1">#F8C471</color>
-    <color name="chartBlue">#417fa3</color>
+    <color name="colorAccent">#0068a4</color>
 </resources>

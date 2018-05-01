@@ -5,7 +5,7 @@
     <string name="permission_denied_explanation">Permissão negada, porém necessária para o funcionamento correto do aplicativo</string>
     <string name="settings">Configurações</string>
     <string name="hello_blank_fragment">Olá mundo fragmento em branco</string>
-    <string name="date_etp">Calculada com dados de %s</string>
+    <string name="date_etp">Calculada para o dia %s</string>
     <string name="alert_title">Erro</string>
     <string name="error_nasa_request">Houve um problema ao recuperar dados dos serviços da NASA</string>
     <string name="alert_ok">OK</string>

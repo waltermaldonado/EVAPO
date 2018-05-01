@@ -7,7 +7,7 @@
     <string name="permission_rationale">Location permission is needed for core functionality</string>
     <string name="permission_denied_explanation">Permission was denied, but is needed for core functionality</string>
     <string name="settings">Settings</string>
-    <string name="date_etp">Calculated with data from %s</string>
+    <string name="date_etp">Calculated for %s</string>
     <string name="alert_title">Error</string>
     <string name="error_nasa_request">There was a problem retrieving information from NASA services</string>
     <string name="alert_ok">OK</string>
