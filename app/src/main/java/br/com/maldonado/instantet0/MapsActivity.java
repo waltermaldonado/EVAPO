@@ -71,6 +71,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,7 +83,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -309,7 +312,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
-        c.add(Calendar.DATE, -50);
+        c.add(Calendar.DATE, -49);
         Date date = new Date();
         date.setTime(c.getTime().getTime());
         Date cDate = new Date();
@@ -384,7 +387,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             JSONObject ws = data.getJSONObject("WS10M");
 
                             Iterator keysToCopyIterator = qg.keys();
-                            List<String> keysList = new ArrayList<String>();
+                            List<String> keysList = new ArrayList<>();
                             while(keysToCopyIterator.hasNext()) {
                                 String key = (String) keysToCopyIterator.next();
                                 keysList.add(key);
@@ -393,53 +396,126 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                             List<Entry> entries = new ArrayList<Entry>();
 
+                            Queue<Double> qg_queue   = new CircularFifoQueue<>(7);
+                            Queue<Double> q0_queue   = new CircularFifoQueue<>(7);
+                            Queue<Double> rh_queue   = new CircularFifoQueue<>(7);
+                            Queue<Double> t2m_queue  = new CircularFifoQueue<>(7);
+                            Queue<Double> tmax_queue = new CircularFifoQueue<>(7);
+                            Queue<Double> tmin_queue = new CircularFifoQueue<>(7);
+                            Queue<Double> ws_queue   = new CircularFifoQueue<>(7);
+
                             for (int i = 0; i < keysList.size(); i++) {
 
-                                if (
-                                        Double.parseDouble(qg.get(keysList.get(i)).toString()) != -99 &&
-                                        Double.parseDouble(q0.get(keysList.get(i)).toString()) != -99 &&
-                                        Double.parseDouble(rh.get(keysList.get(i)).toString()) != -999 &&
-                                        Double.parseDouble(t2m.get(keysList.get(i)).toString()) != -99 &&
-                                        Double.parseDouble(tmax.get(keysList.get(i)).toString()) != -99 &&
-                                        Double.parseDouble(tmin.get(keysList.get(i)).toString()) != -99 &&
-                                        Double.parseDouble(ws.get(keysList.get(i)).toString()) != -999) {
-
-                                    CoreEstimation ce = new CoreEstimation();
-                                    Double etp = ce.estimatePenmannMonteith(
-                                            Double.parseDouble(qg.get(keysList.get(i)).toString()),
-                                            Double.parseDouble(q0.get(keysList.get(i)).toString()),
-                                            Double.parseDouble(tmin.get(keysList.get(i)).toString()),
-                                            Double.parseDouble(tmax.get(keysList.get(i)).toString()),
-                                            Double.parseDouble(ws.get(keysList.get(i)).toString()),
-                                            Double.parseDouble(t2m.get(keysList.get(i)).toString()),
-                                            Double.parseDouble(rh.get(keysList.get(i)).toString()),
-                                            Double.parseDouble(location.getString(2)));
-
-                                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-                                    Date date = null;
-                                    try {
-                                        date = format.parse(keysList.get(i));
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
-
-
-                                    entries.add(new Entry((float) date.getTime(), etp.floatValue()));
-
-                                    java.text.DateFormat dateFormat = DateFormat.getDateFormat(getApplicationContext());
-                                    showTabEtpContent(String.format("%.02f", etp) + " mm/d",
-                                            getString(R.string.date_etp, dateFormat.format(date)));
-
-
+                                if (Double.parseDouble(qg.get(keysList.get(i)).toString()) > -99) {
+                                    qg_queue.add(Double.parseDouble(qg.get(keysList.get(i)).toString()));
+                                } else {
+                                    qg.put(keysList.get(i), Collections.max(qg_queue));
                                 }
+
+                                if (Double.parseDouble(q0.get(keysList.get(i)).toString()) > -99) {
+                                    q0_queue.add(Double.parseDouble(q0.get(keysList.get(i)).toString()));
+                                } else {
+                                    q0.put(keysList.get(i), Collections.max(q0_queue));
+                                }
+
+                                if (Double.parseDouble(rh.get(keysList.get(i)).toString()) > -999) {
+                                    rh_queue.add(Double.parseDouble(rh.get(keysList.get(i)).toString()));
+                                } else {
+                                    rh.put(keysList.get(i), Collections.min(rh_queue));
+                                }
+
+                                if (Double.parseDouble(t2m.get(keysList.get(i)).toString()) > -99) {
+                                    t2m_queue.add(Double.parseDouble(t2m.get(keysList.get(i)).toString()));
+                                } else {
+                                    t2m.put(keysList.get(i), Collections.max(t2m_queue));
+                                }
+
+                                if (Double.parseDouble(tmax.get(keysList.get(i)).toString()) > -99) {
+                                    tmax_queue.add(Double.parseDouble(tmax.get(keysList.get(i)).toString()));
+                                } else {
+                                    tmax.put(keysList.get(i), Collections.max(tmax_queue));
+                                }
+
+                                if (Double.parseDouble(tmin.get(keysList.get(i)).toString()) > -99) {
+                                    tmin_queue.add(Double.parseDouble(tmin.get(keysList.get(i)).toString()));
+                                } else {
+                                    tmin.put(keysList.get(i), Collections.max(tmin_queue));
+                                }
+
+                                if (Double.parseDouble(ws.get(keysList.get(i)).toString()) > -999) {
+                                    ws_queue.add(Double.parseDouble(ws.get(keysList.get(i)).toString()));
+                                } else {
+                                    ws.put(keysList.get(i), Collections.max(ws_queue));
+                                }
+                            }
+
+//                            if (Double.parseDouble(qg.get(keysList.get(keysList.size() - 1)).toString()) == -99) {
+//                                qg.put(keysList.get(keysList.size() - 1), Collections.max(qg_queue));
+//                            }
+//
+//                            if (Double.parseDouble(q0.get(keysList.get(keysList.size() - 1)).toString()) == -99) {
+//                                q0.put(keysList.get(keysList.size() - 1), Collections.max(q0_queue));
+//                            }
+//
+//                            if (Double.parseDouble(rh.get(keysList.get(keysList.size() - 1)).toString()) == -999) {
+//                                rh.put(keysList.get(keysList.size() - 1), Collections.min(rh_queue));
+//                            }
+//
+//                            if (Double.parseDouble(t2m.get(keysList.get(keysList.size() - 1)).toString()) == -99) {
+//                                t2m.put(keysList.get(keysList.size() - 1), Collections.max(t2m_queue));
+//                            }
+//
+//                            if (Double.parseDouble(tmax.get(keysList.get(keysList.size() - 1)).toString()) == -99) {
+//                                tmax.put(keysList.get(keysList.size() - 1), Collections.max(tmax_queue));
+//                            }
+//
+//                            if (Double.parseDouble(tmin.get(keysList.get(keysList.size() - 1)).toString()) == -99) {
+//                                tmin.put(keysList.get(keysList.size() - 1), Collections.max(tmin_queue));
+//                            }
+//
+//                            if (Double.parseDouble(ws.get(keysList.get(keysList.size() - 1)).toString()) == -999) {
+//                                ws.put(keysList.get(keysList.size() - 1), Collections.max(ws_queue));
+//                            }
+
+                            for (int i = 0; i < keysList.size(); i++) {
+
+                                CoreEstimation ce = new CoreEstimation();
+                                float etp = ce.estimatePenmannMonteith(
+                                        Double.parseDouble(qg.get(keysList.get(i)).toString()),
+                                        Double.parseDouble(q0.get(keysList.get(i)).toString()),
+                                        Double.parseDouble(tmin.get(keysList.get(i)).toString()),
+                                        Double.parseDouble(tmax.get(keysList.get(i)).toString()),
+                                        Double.parseDouble(ws.get(keysList.get(i)).toString()),
+                                        Double.parseDouble(t2m.get(keysList.get(i)).toString()),
+                                        Double.parseDouble(rh.get(keysList.get(i)).toString()),
+                                        Double.parseDouble(location.getString(2)));
+
+                                SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+                                Date date = null;
+                                try {
+                                    date = format.parse(keysList.get(i));
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                                entries.add(new Entry((float) date.getTime(), etp));
+
+
+                                java.text.DateFormat dateFormat = DateFormat.getDateFormat(getApplicationContext());
+                                showTabEtpContent(String.format("%.02f", etp) + " mm/d",
+                                        getString(R.string.date_etp, dateFormat.format(date)));
+
+                                Log.d("DATE", "" + dateFormat.format(date));
+                                Log.d("ETP", "" + etp);
 
                             }
 
                             LineDataSet dataSet = new LineDataSet(entries, "ETP");
-                            dataSet.setColor(R.color.chartBlue);
-                            dataSet.setFillColor(R.color.chartBlue);
-                            dataSet.setCircleColor(R.color.chartBlue);
-                            dataSet.setCircleColorHole(R.color.chartBlue);
+                            dataSet.setColor(R.color.colorAccent);
+                            dataSet.setFillColor(R.color.colorAccent);
+                            dataSet.setCircleColor(R.color.colorAccent);
+                            dataSet.setCircleColorHole(R.color.colorAccent);
                             LineData lineData = new LineData(dataSet);
                             chart.setData(lineData);
                             chart.animateY(2000, Easing.EasingOption.EaseOutCubic);

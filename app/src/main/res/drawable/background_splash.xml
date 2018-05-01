@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:drawable="@color/colorYellow1"/>
+        android:drawable="@color/colorAccent"/>
 
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/app_icon"/>
+            android:src="@mipmap/logo_drop_round"/>
     </item>
 </layer-list>

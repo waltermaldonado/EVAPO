@@ -25,7 +25,7 @@ import java.util.Date;
 
 public class CoreEstimation {
 
-    public Double estimatePenmannMonteith(Double qg, Double q0, Double tmin, Double tmax, Double ws, Double t2m,
+    public float estimatePenmannMonteith(Double qg, Double q0, Double tmin, Double tmax, Double ws, Double t2m,
                                   Double rh2m, Double elevation) {
 
 
@@ -63,8 +63,8 @@ public class CoreEstimation {
         Double rn_conv = rn * ( 86400 / Math.pow(10, 6) );
 
         // TODO: Replace srad with Rn
-        Double etp = (0.408 * s * (rn_conv - 0.8) + (gamma * 900 * ws * De) / (t + 273)) /
-                (s + gamma * (1 + 0.34 * ws));
+        float etp = (float) ((0.408 * s * (rn_conv - 0.8) + (gamma * 900 * ws * De) / (t + 273)) /
+                        (s + gamma * (1 + 0.34 * ws)));
 
         return etp;
 
