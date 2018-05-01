@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,39 +10,57 @@
         android:id="@+id/tab1_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:fillViewport="true">
 
-        <LinearLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvLblEtp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/calculated_etp"
+                android:layout_height="29dp"
+                android:layout_marginTop="8dp"
                 android:paddingLeft="10dp"
-                android:paddingTop="10dp"/>
+                android:paddingTop="10dp"
+                android:text="@string/calculated_etp"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tvEtp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="32sp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:gravity="center"
-                android:paddingTop="15dp"/>
+                android:paddingTop="15dp"
+                android:text="@string/calculated_etp"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/tvDateEtp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvLblEtp" />
 
             <TextView
                 android:id="@+id/tvDateEtp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
+                android:layout_height="29dp"
+                android:layout_marginBottom="8dp"
                 android:gravity="end"
-                android:paddingTop="10dp"
                 android:paddingRight="10dp"
-                android:textStyle="italic" />
-        </LinearLayout>
+                android:paddingTop="10dp"
+                android:text="@string/calculated_etp"
+                android:textSize="14sp"
+                android:textStyle="italic"
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </android.support.constraint.ConstraintLayout>
 
     </ScrollView>
 
