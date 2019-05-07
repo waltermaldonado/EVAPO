@@ -366,6 +366,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Chart creation
         final LineChart chart = findViewById(R.id.chart);
 
+        chart.setExtraOffsets(10f, 10f, 10f, 10f);
+
         XAxis xAxis = chart.getXAxis();
         xAxis.setValueFormatter(new ChartDateXAxisFormatter());
         xAxis.setCenterAxisLabels(true);
