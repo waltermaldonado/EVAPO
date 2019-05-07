@@ -22,7 +22,7 @@
 
         <ImageView
             android:id="@+id/logo_gas"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.75"
             android:src="@drawable/logo_gas" />
@@ -31,26 +31,14 @@
             android:id="@+id/logo_unesp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingRight="3dp"
             android:paddingTop="3dp"
             android:src="@drawable/logo_unesp"
             app:layout_constraintStart_toEndOf="@+id/logo_gas"
-            tools:layout_editor_absoluteY="0dp" />
+            tools:layout_editor_absoluteY="0dp"
+            android:paddingStart="3dp"
+            android:paddingEnd="3dp" />
 
     </LinearLayout>
-
-
-
-    <!--<TextView-->
-    <!--android:layout_toRightOf="@id/logo"-->
-    <!--android:id="@+id/tvGAS"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="50dp"-->
-    <!--android:text="@string/about_gas"-->
-    <!--android:gravity="center"-->
-    <!--android:textSize="16sp"-->
-    <!--android:paddingBottom="5dp"-->
-    <!--android:paddingTop="5dp"/>-->
 
     <TextView
         android:id="@+id/fcav"
@@ -129,6 +117,7 @@
         android:gravity="center"
         android:paddingLeft="3dp"
         android:paddingRight="3dp"
+        android:paddingBottom="3dp"
         android:text="@string/link"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
