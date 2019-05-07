@@ -6,6 +6,6 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/logo_drop_round"/>
+            android:src="@drawable/logo_draw_drop_round"/>
     </item>
 </layer-list>
