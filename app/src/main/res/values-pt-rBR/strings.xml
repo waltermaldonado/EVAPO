@@ -25,4 +25,7 @@
     <string name="about_unesp">Universidade Estadual Paulista - UNESP</string>
     <string name="error_internet_conn">Houve um erro ao tentar se conectar ao serviço remoto</string>
     <string name="try_again_internet_conn">Cheque sua conexão com a internet e tente novamente</string>
+    <string name="btn_terrain_satellite">Satélite</string>
+    <string name="btn_terrain_normal">Normal</string>
+    <string name="mm_d">mm/d</string>
 </resources>

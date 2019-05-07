@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">EVAPO</string>
     <string name="title_activity_maps" translatable="false">EVAPO</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyBxuoKdBOr82au9OX4eBHjFd9RJGGR8oQg</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_location_detected">No location detected. Make sure location is enabled on the device</string>
@@ -13,7 +14,7 @@
     <string name="alert_ok">OK</string>
     <string name="unavailable_etp">Service is unavailable</string>
     <string name="try_again_etp">The NASA service is offline, try again later</string>
-    <string name="tab1_title">ETP</string>
+    <string name="tab1_title">PET</string>
     <string name="tab2_title">HISTORY</string>
     <string name="tab3_title">ABOUT</string>
     <string name="chart_nodata">No data available</string>
@@ -21,14 +22,17 @@
     <string name="location_permission_message">This app needs the Location permission, please accept to use location functionality</string>
     <string name="location_message_ok">OK</string>
     <string name="location_permission_denied">Permission denied</string>
-    <string name="calculated_etp">Calculated ETP</string>
+    <string name="calculated_etp">Calculated PET</string>
     <string name="about_gas">Group of Agrometeorologial Studies</string>
     <string name="about_fcav">College of Agricultural and Veterinarian Sciences - FCAV</string>
     <string name="about_unesp">São Paulo State University - UNESP</string>
     <string name="walter" translatable="false">Walter Maldonado Junior</string>
     <string name="taynara" translatable="false">Taynara Tuany Borges Valeriano</string>
     <string name="glauco" translatable="false">Glauco de Souza Rolim</string>
-    <string name="link" translatable="false">https://doi.org/10.1016/j.compag.2016.07.023</string>
+    <string name="link" translatable="false">https://doi.org/10.1016/j.compag.2018.10.032</string>
     <string name="error_internet_conn">There was an error contacting the webservice</string>
     <string name="try_again_internet_conn">Check your internet connectivity and try again</string>
+    <string name="btn_terrain_satellite">Satellite</string>
+    <string name="btn_terrain_normal">Normal</string>
+    <string name="mm_d">mm/d</string>
 </resources>

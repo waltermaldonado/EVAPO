@@ -33,7 +33,7 @@
             android:value="@string/google_maps_key" />
         <meta-data
             android:name="android.support.VERSION"
-            android:value="26.1.0"
+            android:value="28.0.0"
             tools:replace="android:value" />
 
         <activity
